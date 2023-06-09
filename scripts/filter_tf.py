@@ -71,7 +71,7 @@ class TfFilter():
         if args.destination_frame != "":
             self.filtered_child_frame = args.destination_frame
         else:
-            self.filtered_child_frame = args.child_frame + "_filtered"
+            self.filtered_child_frame = args.child_frame + "_" + args.name + "_filtered"
 
         # kinect2_rgb_optical_frame (frame in which Table1 was observed from)
         self.parent_frame = args.parent_frame
@@ -98,12 +98,13 @@ class TfFilter():
         try:
             (raw_translation, raw_rotation) = self.tf_listener.lookupTransform(
                 self.parent_frame, self.observed_child_frame,  rospy.Time(0))
-            if self.observation_count < self.min_observation_count:
+            if self.observation_count < int(self.min_observation_count):
                 self.observation_count += 1
         except (tf.LookupException, tf.ConnectivityException,
-                tf.ExtrapolationException, tf.Exception), e:
-            rospy.logerr("Failed to lookup transform for %s to %s" %
-                         (self.parent_frame, self.observed_child_frame))
+                tf.ExtrapolationException, tf.Exception) as e:
+            pass
+#             rospy.logerr("Failed to lookup transform for %s to %s" %
+#                          (self.parent_frame, self.observed_child_frame))
 
         return raw_translation, raw_rotation
 
